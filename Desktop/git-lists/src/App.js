@@ -23,8 +23,8 @@ function App() {
                 <Route path="/:id" element={<Search />} />
                 <Route path="/profile" element={<Profile />} />
                 <Route path="/profile/:id" element={<Profile />} />
-                <Route path="/git-lists/:id" element={<Profile />} />
-                <Route path="/git-lists/" element={<Profile />} />
+                <Route path="/git-lists/:id" element={<Search />} />
+                <Route path="/git-lists/" element={<Search />} />
             </Routes>
         </Router>
       </AppContext.Provider>
