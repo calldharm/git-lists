@@ -1,3 +1,4 @@
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
@@ -13,6 +14,24 @@ Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
 
 The page will reload when you make changes.\
 You may also see any lint errors in the console.
+
+
+### git-list running instructions
+1. Clone repo "Main" branch - https://github.com/calldharm/git-lists/tree/main
+2. Do npm i to install dependecies.
+3. Add a .env file in your app at root level near .gitignore
+5. Generate a GIT API token in your account.
+4. Add your Git API token in .env file like this "GIT_API_TOKEN=token your_token"
+5. Do npm start
+6. You will see the app at "http://localhost:3000/git-list" or "http://localhost:3000/"
+7. Remove anything after port number "3000".
+7. Either or type a GIT user name after port, like this in URL = "http://localhost:3000/pdf".
+8. Hit enter will load your profile and repos.
+9. Here is the preview of the app:
+![alt](./git-list-design.png)
+
+
+
 
 ### `npm test`
 
