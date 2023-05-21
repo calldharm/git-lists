@@ -68,14 +68,3 @@ This section has moved here: [https://facebook.github.io/create-react-app/docs/d
 ### `npm run build` fails to minify
 
 This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
-
-
-### git-list running instructions
-1. Clone repo.
-2. Do npm i to install dependecies.
-3. Add a .env file in your app at root level nea .gitignore
-4. Add your Git API token generated in .env file like this "GIT_API_TOKEN=token your_token"
-5. Do npm start
-6. You will see the app at "http://localhost:3000/"
-7. Either type your user name after port like this in URL = "http://localhost:3000/pdf".
-8. Hit enter will load your profile and repos.

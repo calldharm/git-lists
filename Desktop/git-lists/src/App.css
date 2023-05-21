@@ -1,22 +1,5 @@
-/* main app css */
 .App {
   text-align: center;
-  margin: 1rem;
-  padding: 1rem;
-}
-/* Search compoennt css */
-.Search {
-  text-align: center;
-  margin: 40px;
-  padding: 20px;
-  height: 64.5rem;
-}
-
-/* Profile compoennt css */
-.Profile {
-  text-align: center;
-  margin: 50px;
-  padding: 10px;
 }
 
 .App-logo {
