@@ -1,11 +1,11 @@
-import { useContext, Fragment } from "react"
+import { useContext, Fragment, useState } from "react"
 import { AppContext } from "../App"
 import { Profile } from './Profile';
 import "../App.css";
 import { useNavigate } from 'react-router-dom';
 import { useParams } from "react-router-dom";
 
-export const Search = () => {
+export const Search = (props) => {
     /* Search component: 
        For users to enter their user name.
        When search button is clicked, user is taken to the profile page,
@@ -25,7 +25,7 @@ export const Search = () => {
         // navigate('/Profile');
         // navigate(`/${userInput}`);
     };
-
+    
     return (
     <div className="Search w-100 min-vh-50 justify-content-center align-items-center d-flex flex-column">
        {/* TODO: Hiding search fields, since there is some issue, will work later */}
@@ -48,18 +48,6 @@ export const Search = () => {
       </form>
     
        <>
-         {/* <Alert variant="success">
-            Enter User name in URL like this: http://localhost:3000/pdf
-         </Alert> */}
-
-          {/* <OverlayTrigger
-            placement="right"
-            delay={{ show: 250, hide: 400 }}
-            overlay={renderTooltip}
-           >
-            <Button style={{ width: '3rem' , height: '1.1rem', fontSize: '0.6rem', padding: '1px', margin:'5px', cursor: "pointer"}} variant="warning">info</Button>
-           </OverlayTrigger> */}
-
          {/* Loading Profile as well */}
          <Profile user={userInput} />
         </>

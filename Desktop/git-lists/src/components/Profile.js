@@ -12,15 +12,29 @@ import Card from 'react-bootstrap/Card';
 import ListGroup from 'react-bootstrap/ListGroup';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
+import Popup from "./Popup";
 
 
-export const Profile = () => {
+export const Profile = (props) => {
     // User Profile  : Using Bootstrap elements for main profile page
 
    const [avatarURL, setAvatarURL] = useState();
    const [githubUsername, setGitHubUsername] = useState();
-
+   const [githubUserURL, setgithubUserURL] = useState();
    const [repoData, setRepoData] = useState();
+   /* 
+     Page counter state to maintainand count the paginated data
+     Since Github api return 30 records by default
+   */
+   const [currPage, setcurrPage] = useState();
+
+   // const [errorOccured, seterrorOccured] = useState();
+   // const [showPopup, setshowPopup] = useState();
+   const [popupTitle, setpopupTitle] = useState();
+   const [popupBody, setpopupBody] = useState();
+   const [toggle, setToggle] = useState(false);
+  
+
    // Get ID from URL
    const params = useParams();
    let {userInput}=useContext(AppContext);
@@ -33,46 +47,39 @@ export const Profile = () => {
 
     if (params.id || userInput) {
       user = params.id || userInput
-    } 
+    } else {
+      user = "";
+      return;
+    }
     
-    // Get API url nd header from constant
+    // Get API url and header from constant
     const apiURL = `${LIST_CONSTANTS.GIT_API_GET_USERS}${user}${LIST_CONSTANTS.GIT_REPOS}`;
     const apiHeader = getAPIHeader;
 
     await fetch(apiURL,apiHeader)
-      .then((res) => res.json()) // converting  response in json
+      .then((res) => res.json()) // converting response in json
       .then(
         (result) => {
-          console.log(36, result);
-          let profileContent = "";
-          profileContent = (result[0] && result[0].message && result[0].message === LIST_CONSTANTS.MSG_NOTFOUND) ? LIST_CONSTANTS.MSG_OOPS : "";
-          
-          const list = (result && Array.isArray(result)) ? result.map((item) => (
-          
-            <ListGroup.Item>
-              <a target="_blank" href={item.svn_url}>
-                {item.name}
-              </a>
-            </ListGroup.Item>
 
-          )) : [];
-
-          if(profileContent) {
-            list = ["opps"];
-          } else {
-            // setRepoData(list);
+          if(result.message) {
+            console.log('USER ERROR3 : ', result.message);
+            //  setshowPopup(true);
+            setpopupTitle("API Error")
+            setpopupBody(result.message);
+            setToggle(true);
+            // seterrorOccured(true);
+            throw new Error(result.message);
+           }
+          else {
+            console.log(36, result);
             setRepoData(result);
-          }
+         }
           
-        },
-        // In case of any error in API log here
-        (error) => {
-          console.log(error);
-          <div className="text-center">
-            Opps.. something went wrong, please check user ID or try again later.
-          </div>
         }
-      );
+      ).catch(err => {
+        // console.log('REPO ERROR : ',err);
+        // throw new Error(err);
+      });
   }
 
 
@@ -96,64 +103,169 @@ export const Profile = () => {
     .then((res) => res.json())
     .then(
       (result) => {
-        console.log(result);
-        setAvatarURL(result.avatar_url);
-        setGitHubUsername(result.login);
+        if(result.message) {
+          console.log('USER ERROR2 : ', result.message);
+          // popup("API Error", result.message);
+          // setshowPopup(true);
+          setpopupTitle("API Error :  " + result.message)
+          setpopupBody( "It seems GIT user ID is invalid. Please use a different user or try again later");
+          setToggle(true);
+          throw new Error(result.message);
+         }
+        else {
+          console.log(result);
+          setAvatarURL(result.avatar_url);
+          setGitHubUsername(result.login);
+          setgithubUserURL(result.html_url);
+        }
       },
-      (error) => {
-        console.log(error);
-      }
-    );
+    ).catch(err => {
+      // console.log('USER ERROR : ', err);
+      // throw new Error(err);
+    });
+    
   }, []);
+
+
 
   // Get list of repos for given user
   useEffect(() => {
     repoDataURL();
   }, []);
 
+
+  // Async function to call Github api to load more repos
+async function repoDataMore() {
+  // Increament current page counter
+
+  let user = '';
+  // don't do anything if params of url ID is not valid
+  if (!params || !params.id) return;
+
+  if (params.id || userInput) {
+    user = params.id || userInput
+  } else {
+    user = "";
+    return;
+  }
+  // Get next page number
+  let nextPage = (currPage) ? currPage + 1 : 1 ;
+  
+  // Get API url and header from constant
+  const apiURL = `${LIST_CONSTANTS.GIT_API_GET_USERS}${user}${LIST_CONSTANTS.GIT_REPOS}?page=${nextPage}`; 
+  const apiHeader = getAPIHeader;
+
+  await fetch(apiURL,apiHeader)
+    .then((res) => res.json())
+    .then(
+      (result) => {
+        if(result.message) {
+          console.log('MORE REPO ERROR : ', result.message);
+          // setshowPopup(true);
+          setpopupTitle("API Error")
+          setpopupBody(result.message);
+          setToggle(true);
+          throw new Error(result.message);
+         }
+        else 
+        {
+          // Check for both previous and new data set and then concat them
+          if (result && Array.isArray(result) && (result.length > 0) && repoData && Array.isArray(repoData)) {
+             const moreData = repoData.concat(result);
+             //Assign the new moredata in state, that will re-render the component
+             setRepoData(moreData);
+             // Set the state with current page number
+             setcurrPage((currPage) ? currPage + 1 : 1);
+          }
+        }
+       }
+      ).catch(err => {
+        // console.log('REPO ERROR : ',err);
+        // throw new Error(err);
+      });
+}
+
+  
+  // Render the jsx
   return (
     <>
-      <div className="pt-10" >
-        <h4 className="mb-10 font-bold">
-          {LIST_CONSTANTS.MSG_VIEWREPOOF} <b>{githubUsername}</b>
-        </h4>
+    
+     { 
+      //  Check if nurl ism defined then show proper message else empty
+       (githubUsername) ?
+     
+        <div className="pt-10" >
+          <span style={{ fontSize: '01rem'}}>
+            {LIST_CONSTANTS.MSG_VIEWREPOOF} <b> <a target="_blank" href={githubUserURL} style={{ cursor: "pointer"}}> {githubUsername} </a> </b>
+          </span>
+        </div>
+      :
+        <>
+          <h6 className="mb-10">
+            {LIST_CONSTANTS.MSG_TOOLTIP_URL}
+          </h6>
+        </>
+     }
+     {
+       //  Check if nurl ism defined then show proper component else empty
+       (githubUsername) ?
+      <>
+      {
+        !repoData ? 
+        (
+          <Loading />
+        ) 
+
+        : 
+        
+        (
+          // reating cards for each item
+          <Row lg={4} style={{ padding: '0.5rem', whiteSpace: 'normal', overflow: 'auto'}}>
+            {repoData.map((item) => (
+            
+            <Col className="d-flex" style={{ padding: '0.5rem'}}>
+              <Card style={{ width: '17rem' , height: '18rem', minWidth: '17rem', minHeight: '18rem'}} className="flex-fill" key={item} className="productlist">
+                <Card.Body style={{ padding: '0.1rem' , margin: '0.4rem'}}>
+                <Card.Img variant="top" src={avatarURL} style={{ width: '3rem', height: '3rem', alignSelf:'left', marginRight: '1.2rem' }} />
+                <Button href={item.svn_url} target="_blank"  style={{ width: '10rem' , height: '1.8rem', fontSize: '1rem', padding: '1px', margin:'1px', cursor: "pointer"}} variant="primary">{item.name}</Button>
+                <Button style={{ width: '3rem' , height: '1.1rem', fontSize: '0.6rem', padding: '1px', margin:'1px'}} variant="secondary">{(item.private)? 'Private' : 'Public'}</Button>
+                <Card.Text style={{ fontSize: '0.6rem' }}> {item.language} </Card.Text>
+                <Card.Text style={{ fontSize: '0.7rem', height:'2.7rem', maxHeight: '2.7rem', minHeight: '2.7rem', overflowY:'auto' }}>{item.description}</Card.Text>
+                </Card.Body>
+    
+                <ListGroup style={{ fontSize: '0.7rem', padding: '0.1rem' , margin: '0.1rem' }} className="list-group-flush">
+                  <ListGroup.Item>Owner : {githubUsername}</ListGroup.Item>
+                  <ListGroup.Item>Issues :{item.open_issues}</ListGroup.Item>
+                  {/* <ListGroup.Item>{ (item.license.name) ? 'Licence :' + item.license.name : 'Size : ' + item.size} </ListGroup.Item> */}
+                </ListGroup>
+
+                <Card.Body>
+                  <Button href={item.clone_url} target="_blank" style={{ width: '3rem' , height: '1.1rem', fontSize: '0.6rem', padding: '1px', margin:'3px', cursor: "pointer"}} variant="success">clone</Button>
+                  <Button style={{ width: '3rem' , height: '1.1rem', fontSize: '0.6rem', padding: '1px', margin:'3px'}} variant="warning"><b>{item.stargazers_count}</b> starts</Button>
+                  <Button style={{ width: '3rem' , height: '1.1rem', fontSize: '0.6rem', padding: '1px', margin:'3px'}} variant="light">{item.forks_count} forks</Button>
+                  <Button style={{ width: '4rem' , height: '1.1rem', fontSize: '0.6rem', padding: '1px', margin:'3px'}} variant="light">{item.watchers} watchers</Button>
+                </Card.Body>
+
+              </Card>
+            </ Col>
+            ))}  
+          </Row>
+        )
+        
+        
+      }
+      <div style={{ height: '0.1rem', padding: '0.1px', margin: '0.1px'}}>
+        <Button onClick={() => repoDataMore()} style={{ width: '4rem' , height: '1.2rem', fontSize: '0.6rem', padding: '1px', margin:'3px', cursor: "pointer"}} variant="success">Load More</Button>
       </div>
-
-      {!repoData ? (
-        <Loading />
-      ) : (
-        // reating cards for each item
-        <Row lg={4} style={{ padding: '0.5rem', whiteSpace: 'normal', overflow: 'auto'}}>
-          {repoData.map((item) => (
-          
-          <Col className="d-flex" style={{ padding: '0.5rem'}}>
-            <Card style={{ width: '17rem' , height: '18rem', minWidth: '17rem', minHeight: '18rem'}} className="flex-fill" key={item} className="productlist">
-              <Card.Body style={{ padding: '0.1rem' , margin: '0.4rem'}}>
-               <Card.Img variant="top" src={avatarURL} style={{ width: '3rem', height: '3rem', alignSelf:'left', marginRight: '1.2rem' }} />
-               <Button href={item.svn_url} target="_blank"  style={{ width: '10rem' , height: '1.8rem', fontSize: '1rem', padding: '1px', margin:'1px', cursor: "pointer"}} variant="primary">{item.name}</Button>
-               <Button style={{ width: '3rem' , height: '1.1rem', fontSize: '0.6rem', padding: '1px', margin:'1px'}} variant="secondary">{(item.private)? 'Private' : 'Public'}</Button>
-               <Card.Text style={{ fontSize: '0.6rem' }}> {item.language} </Card.Text>
-               <Card.Text style={{ fontSize: '0.7rem', height:'2.7rem', maxHeight: '2.7rem', minHeight: '2.7rem', overflowY:'auto' }}>{item.description}</Card.Text>
-              </Card.Body>
-  
-              <ListGroup style={{ fontSize: '0.7rem', padding: '0.1rem' , margin: '0.1rem' }} className="list-group-flush">
-                <ListGroup.Item>Owner : {githubUsername}</ListGroup.Item>
-                <ListGroup.Item>Issues :{item.open_issues}</ListGroup.Item>
-                {/* <ListGroup.Item>{ (item.license.name) ? 'Licence :' + item.license.name : 'Size : ' + item.size} </ListGroup.Item> */}
-              </ListGroup>
-
-              <Card.Body>
-                <Button href={item.clone_url} target="_blank" style={{ width: '3rem' , height: '1.1rem', fontSize: '0.6rem', padding: '1px', margin:'3px', cursor: "pointer"}} variant="success">clone</Button>
-                <Button style={{ width: '3rem' , height: '1.1rem', fontSize: '0.6rem', padding: '1px', margin:'3px'}} variant="warning"><b>{item.stargazers_count}</b> starts</Button>
-                <Button style={{ width: '3rem' , height: '1.1rem', fontSize: '0.6rem', padding: '1px', margin:'3px'}} variant="light">{item.forks_count} forks</Button>
-                <Button style={{ width: '4rem' , height: '1.1rem', fontSize: '0.6rem', padding: '1px', margin:'3px'}} variant="light">{item.watchers} watchers</Button>
-              </Card.Body>
-
-            </Card>
-          </ Col>
-          ))}
-        </Row>
-      )}
+      </>
+      :
+      <>
+        {/* Popup for errors */}
+        { (toggle) ?
+          Popup(popupTitle, popupBody)  : ''
+        }
+      </>
+     }
     </>
   );
   
