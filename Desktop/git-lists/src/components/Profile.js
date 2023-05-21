@@ -114,20 +114,20 @@ export const Profile = () => {
   return (
     <>
       <div className="pt-10" >
-        <h3 className="mb-10 font-bold text-2xl">
+        <h4 className="mb-10 font-bold">
           {LIST_CONSTANTS.MSG_VIEWREPOOF} <b>{githubUsername}</b>
-        </h3>
+        </h4>
       </div>
 
       {!repoData ? (
         <Loading />
       ) : (
         // reating cards for each item
-        <Row lg={5} style={{ padding: '0.5rem', whiteSpace: 'normal', overflow: 'auto'}}>
+        <Row lg={4} style={{ padding: '0.5rem', whiteSpace: 'normal', overflow: 'auto'}}>
           {repoData.map((item) => (
           
           <Col className="d-flex" style={{ padding: '0.5rem'}}>
-            <Card style={{ width: '17rem' , height: '18rem'}} className="flex-fill" key={item} className="productlist">
+            <Card style={{ width: '17rem' , height: '18rem', minWidth: '17rem', minHeight: '18rem'}} className="flex-fill" key={item} className="productlist">
               <Card.Body style={{ padding: '0.1rem' , margin: '0.4rem'}}>
                <Card.Img variant="top" src={avatarURL} style={{ width: '3rem', height: '3rem', alignSelf:'left', marginRight: '1.2rem' }} />
                <Button href={item.svn_url} target="_blank"  style={{ width: '10rem' , height: '1.8rem', fontSize: '1rem', padding: '1px', margin:'1px', cursor: "pointer"}} variant="primary">{item.name}</Button>
