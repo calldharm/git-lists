@@ -3,8 +3,7 @@
 
 // Function to get API headers
 export const getAPIHeader = () => {
-  // require('dotenv').config();
-  const API_TOKEN  = process.env.API_TOKEN;
+  const API_TOKEN  = process.env.REACT_APP_GIT_API_TOKEN;
     const header = {
         method: "GET",
         // Get GIT API token from ENV

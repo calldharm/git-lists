@@ -1,6 +1,6 @@
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
-import React, { useState } from 'react'
+// import React, { useState } from 'react'
 
 // A fluid reusable popup for entire app
 // export default function Popup (

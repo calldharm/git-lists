@@ -1,9 +1,9 @@
-import { useContext, Fragment, useState } from "react"
+import { useContext } from "react"
 import { AppContext } from "../App"
 import { Profile } from './Profile';
 import "../App.css";
-import { useNavigate } from 'react-router-dom';
-import { useParams } from "react-router-dom";
+// import { useNavigate } from 'react-router-dom';
+// import { useParams } from "react-router-dom";
 
 export const Search = (props) => {
     /* Search component: 
@@ -12,14 +12,10 @@ export const Search = (props) => {
        using useNavigate from react router dom
     */
 
-    const navigate = useNavigate();
     const {userInput,setUserInput} = useContext(AppContext);
-    // Get ID from URL
-    const params = useParams();
     
     // Function to navigate user to there profile page
     async function LogUser (){
-        // debugger;
         // Get ID from URL
         // const params = useParams();
         // navigate('/Profile');

@@ -4,7 +4,11 @@ import Footer from "./components/footer/Footer";
 import { Search } from './components/Search';
 import { Profile } from './components/Profile';
 import React from 'react';
-import {BrowserRouter as Router, Routes,Route } from 'react-router-dom';
+import { 
+  BrowserRouter as Router, 
+  Routes,Route, 
+  // HashRouter 
+} from 'react-router-dom';
 import {useState, createContext } from "react";
 import { LIST_CONSTANTS } from "./utility/constanst"
 
@@ -18,7 +22,10 @@ function App() {
       {/* useContext hook is used here to pass the userInput and setUserInput through the pages. */}
        <AppContext.Provider value={{userInput,setUserInput}}>
         <Router>
-            <Routes>
+          {/* <HashRouter> */}
+
+           {/* basename={process.env.PUBLIC_URL} */}
+            <Routes> 
                 <Route path="/" element={<Search />} />
                 <Route path="/:id" element={<Search />} />
                 <Route path="/profile" element={<Profile />} />
@@ -26,6 +33,8 @@ function App() {
                 <Route path="/git-lists/:id" element={<Search />} />
                 <Route path="/git-lists/" element={<Search />} />
             </Routes>
+            
+          {/* </HashRouter> */}
         </Router>
       </AppContext.Provider>
       <Footer note={LIST_CONSTANTS.MSG_FOOTER} />

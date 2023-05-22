@@ -32,7 +32,6 @@ export const Profile = (props) => {
    const [popupTitle, setpopupTitle] = useState();
    const [popupBody, setpopupBody] = useState();
    const [toggle, setToggle] = useState(false);
-   let toggle1 = "";
    // Get ID from URL
    const params = useParams();
    let {userInput}=useContext(AppContext);
@@ -53,9 +52,9 @@ export const Profile = (props) => {
     
     // Get API url and header from constant
     const apiURL = `${LIST_CONSTANTS.GIT_API_GET_USERS}${user}${LIST_CONSTANTS.GIT_REPOS}`;
-    const apiHeader = getAPIHeader;
+    const apiHeader = getAPIHeader();
 
-    await fetch(apiURL,apiHeader)
+    await fetch(apiURL, apiHeader)
       .then((res) => res.json()) // converting response in json
       .then(
         (result) => {
@@ -90,11 +89,12 @@ export const Profile = (props) => {
       userInput = params.id;
     }
 
+    if(userInput) {
     // Get API url and header from constant
     const apiURL = `${LIST_CONSTANTS.GIT_API_GET_USERS}${userInput}`;
-    const apiHeader = getAPIHeader;
+    const apiHeader = getAPIHeader();
 
-    fetch(apiURL, apiHeader())
+    fetch(apiURL, apiHeader)
     .then((res) => res.json())
     .then(
       (result) => {
@@ -116,6 +116,7 @@ export const Profile = (props) => {
       // console.log('USER ERROR : ', err);
       // throw new Error(err);
     });
+   }
     
   }, []);
 
@@ -146,7 +147,7 @@ async function repoDataMore() {
   
   // Get API url and header from constant
   const apiURL = `${LIST_CONSTANTS.GIT_API_GET_USERS}${user}${LIST_CONSTANTS.GIT_REPOS}?page=${nextPage}`; 
-  const apiHeader = getAPIHeader;
+  const apiHeader = getAPIHeader();
 
   await fetch(apiURL,apiHeader)
     .then((res) => res.json())
@@ -187,7 +188,7 @@ async function repoDataMore() {
      
         <div className="pt-10" >
           <span style={{ fontSize: '01rem'}}>
-            {LIST_CONSTANTS.MSG_VIEWREPOOF} <b> <a target="_blank" href={githubUserURL} style={{ cursor: "pointer"}}> {githubUsername} </a> </b>
+            {LIST_CONSTANTS.MSG_VIEWREPOOF} <b> <a target="_blank" rel="noreferrer" href={githubUserURL} style={{ cursor: "pointer"}}> {githubUsername} </a> </b>
           </span>
         </div>
       :
@@ -214,8 +215,8 @@ async function repoDataMore() {
           <Row lg={4} style={{ padding: '0.5rem', whiteSpace: 'normal', overflow: 'auto'}}>
             {repoData.map((item) => (
             
-            <Col className="d-flex" style={{ padding: '0.5rem'}}>
-              <Card style={{ width: '17rem' , height: '18rem', minWidth: '17rem', minHeight: '18rem'}} className="flex-fill" key={item} className="productlist">
+            <Col className="d-flex" style={{ padding: '0.5rem'}} id={item} key={item.name}>
+              <Card style={{ width: '17rem' , height: '18rem', minWidth: '17rem', minHeight: '18rem'}}  key={item}>
                 <Card.Body style={{ padding: '0.1rem' , margin: '0.4rem'}}>
                 <Card.Img variant="top" src={avatarURL} style={{ width: '3rem', height: '3rem', alignSelf:'left', marginRight: '1.2rem' }} />
                 <Button href={item.svn_url} target="_blank"  style={{ width: '10rem' , height: '1.8rem', fontSize: '1rem', padding: '1px', margin:'1px', cursor: "pointer"}} variant="primary">{item.name}</Button>

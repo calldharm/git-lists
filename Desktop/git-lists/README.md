@@ -21,7 +21,7 @@ You may also see any lint errors in the console.
 2. Do npm i to install dependecies.
 3. Add a .env file in your app at root level near .gitignore
 5. Generate a GIT API token in your account.
-4. Add your Git API token in .env file like this "GIT_API_TOKEN=token your_token"
+4. Add your Git API token in .env file like this "REACT_APP_GIT_API_TOKEN=token your_token"
 5. Do npm start
 6. You will see the app at "http://localhost:3000/git-list" or "http://localhost:3000/"
 7. Remove anything after port number "3000".
