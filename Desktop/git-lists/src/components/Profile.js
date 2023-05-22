@@ -27,17 +27,16 @@ export const Profile = (props) => {
      Since Github api return 30 records by default
    */
    const [currPage, setcurrPage] = useState();
-
    // const [errorOccured, seterrorOccured] = useState();
    // const [showPopup, setshowPopup] = useState();
    const [popupTitle, setpopupTitle] = useState();
    const [popupBody, setpopupBody] = useState();
    const [toggle, setToggle] = useState(false);
-  
-
+   let toggle1 = "";
    // Get ID from URL
    const params = useParams();
    let {userInput}=useContext(AppContext);
+
 
    // Async function to call Github api and get repo data
    async function repoDataURL() {
@@ -60,18 +59,14 @@ export const Profile = (props) => {
       .then((res) => res.json()) // converting response in json
       .then(
         (result) => {
-
           if(result.message) {
-            console.log('USER ERROR3 : ', result.message);
-            //  setshowPopup(true);
             setpopupTitle("API Error")
             setpopupBody(result.message);
             setToggle(true);
-            // seterrorOccured(true);
-            throw new Error(result.message);
+            // throw new Error(result.message);
            }
           else {
-            console.log(36, result);
+            // console.log(36, result);
             setRepoData(result);
          }
           
@@ -104,13 +99,11 @@ export const Profile = (props) => {
     .then(
       (result) => {
         if(result.message) {
-          console.log('USER ERROR2 : ', result.message);
-          // popup("API Error", result.message);
-          // setshowPopup(true);
-          setpopupTitle("API Error :  " + result.message)
-          setpopupBody( "It seems GIT user ID is invalid. Please use a different user or try again later");
+          setpopupTitle("API Error")
+          setpopupBody(result.message)
+            // "It seems GIT user ID is invalid. Please use a different user or try again later");
           setToggle(true);
-          throw new Error(result.message);
+          // throw new Error(result.message);
          }
         else {
           console.log(result);
@@ -160,12 +153,10 @@ async function repoDataMore() {
     .then(
       (result) => {
         if(result.message) {
-          console.log('MORE REPO ERROR : ', result.message);
-          // setshowPopup(true);
           setpopupTitle("API Error")
           setpopupBody(result.message);
           setToggle(true);
-          throw new Error(result.message);
+          // throw new Error(result.message);
          }
         else 
         {
@@ -208,7 +199,7 @@ async function repoDataMore() {
      }
      {
        //  Check if nurl ism defined then show proper component else empty
-       (githubUsername) ?
+      (githubUsername) ?
       <>
       {
         !repoData ? 
@@ -251,8 +242,6 @@ async function repoDataMore() {
             ))}  
           </Row>
         )
-        
-        
       }
       <div style={{ height: '0.1rem', padding: '0.1px', margin: '0.1px'}}>
         <Button onClick={() => repoDataMore()} style={{ width: '4rem' , height: '1.2rem', fontSize: '0.6rem', padding: '1px', margin:'3px', cursor: "pointer"}} variant="success">Load More</Button>
@@ -261,8 +250,10 @@ async function repoDataMore() {
       :
       <>
         {/* Popup for errors */}
-        { (toggle) ?
-          Popup(popupTitle, popupBody)  : ''
+        { 
+          (toggle) ?
+          Popup(toggle, popupTitle, popupBody)  
+           : ''
         }
       </>
      }
